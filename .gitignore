@@ -8,3 +8,4 @@ yarn-error.log*
 .tmp
 .vscode
 *.env
+alteryx-ai-ops-llm-agents-pocs/OpenAIKey.env

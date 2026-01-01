@@ -1,6 +1,6 @@
 import argparse
 import json
-import os
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Tuple
@@ -9,31 +9,10 @@ import yaml
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+# Add parent directory to path for shared imports when running as script
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-try:
-    from openai import OpenAI
-except ImportError:  # pragma: no cover - handled at runtime
-    OpenAI = None  # type: ignore[assignment]
-
-
-def call_llm(prompt: str) -> str:
-    if OpenAI is None:
-        raise SystemExit(
-            "Missing dependency: install OpenAI SDK with `pip install openai` or "
-            "remove the OpenAI call in `call_llm`."
-        )
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        raise SystemExit("Set OPENAI_API_KEY before running this script.")
-
-    client = OpenAI(api_key=api_key)
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.3,
-        max_tokens=400,
-    )
-    return response.choices[0].message.content.strip()
+from shared import call_llm
 
 
 @dataclass
